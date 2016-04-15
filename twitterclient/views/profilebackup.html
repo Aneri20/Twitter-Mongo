@@ -1,0 +1,178 @@
+<html>
+<meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=320, height=device-height, target-densitydpi=medium-dpi" />
+
+
+<head>
+    <title>Successful Login</title>
+    <link rel='stylesheet' href='/stylesheets/style.css' />
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">
+
+    <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.2.26/angular.min.js"></script>
+    <script
+            src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+    <script src="http://code.jquery.com/ui/1.9.2/jquery-ui.js"></script>
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+
+    <!-- Optional theme -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap-theme.min.css" integrity="sha384-fLW2N01lMqjakBkx3l/M9EahuwpSfeNvV63J5ezn3uZzapT0u7EYsXMjQV+0En5r" crossorigin="anonymous">
+    <script src="angularjs/profile.js"></script>
+    <!-- Latest compiled and minified JavaScript -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
+</head>
+<body ng-app="suggestedusers" ng-controller="suggestedusers">
+<div class="container">
+    <nav class="navbar navbar-default navbar-fixed-top">
+        <div class="container-fluid">
+            <ul class="nav nav-pills">
+                <li role="presentation" class="active"><a href="#"><span class="glyphicons glyphicons-home"></span>Home</a></li>
+                <li role="presentation"><a href="#"><span class="glyphicon glyphicon-bell"></span>Notifications</a></li>
+                <li role="presentation"><a href="#"><span class="glyphicon glyphicon-envelope"></span>Messages</a></li>
+
+                <form class="navbar-form navbar-right" role="search">
+                    <li role="presentation"><a href="logout">Logout</a></li>
+                    <div class="form-group">
+                        <input type="text" class="form-control" placeholder="Search" aria-describedby="basic-addon1" class="input-group-addon" id="basic-addon1">
+                        <button type="submit" class="btn btn-default"><span class="glyphicon glyphicon-search" style="color:#1da1f2"></span></button></span>
+                    </div>
+
+                </form>
+            </ul>
+        </div>
+    </nav>
+
+
+    <div ng-hide="profileforperson">
+        <p>Hello displaying</p>
+        <table ng-repeat="tweets in tweetsmine">
+            <tr>
+                <td>@{{tweets.user_name}}</td>
+                <td>{{tweets.raw_text}}</td>
+                <td>{{tweets.timestamp}}</td>
+            </tr>
+        </table>
+    </div>
+
+    <div ng-hide="home">
+        <h3>HomePage of twitter</h3>
+
+        <div align="left">
+
+            <strong>Username</strong>
+            <%if(typeof user!=undefined)
+            {%>
+            <p><strong><a href="#"  ng-click="displaytweet();"><%=fullname%></a></strong></p>
+            <p><strong>@<%=user%></strong></p>
+
+            <%
+            }  %>
+        </div>
+        <br>
+
+
+        <div class="flex-module">
+            <div class="flex-module-header">
+                <h1>Suggested users</h1>
+                <h3   style="color:#8899a6">Who to follow</h3>
+                <small>&middot; </small>
+                <button type="button" class="btn-link js-refresh-suggestions"><small>Refresh</small></button>
+                <!-- <small class="view-all">&middot; <a  class="js-view-all-link" href="/who_to_follow/suggestions" data-element-term="view_all_link">View all</a></small>-->
+            </div>
+            <br>
+            <div class="js-recommended-followers dashboard-user-recommendations flex-module-inner" data-section-id="wtf">
+                <table>
+                    <tr>
+                        <td>
+                            <p ng-repeat="fullnames in userssuggested" style="color:#1da1f2"><a>{{fullnames.full_name}}</a></p>
+                        </td>
+                        <td>
+                            <p ng-repeat="users in userssuggested" style="color:#1da1f2">@{{users.user_name}}</p><br></td>
+
+                        <td> <p ng-repeat="userids in userssuggested"> <input type="button" style="color:#8899a6" value="follow" ng-click="btnclick(userids.user_id);"/></p></td>
+
+                    </tr>
+                </table>
+            </div></div>
+        <table><tr> <div class="dropdown">
+            <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                Following{{iamfollowing}}
+                <span class="caret"></span>
+            </button>
+            <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+                <li><a href="#">Action</a></li>
+                <li><a href="#">Another action</a></li>
+                <li><a href="#">Something else here</a></li>
+                <li role="separator" class="divider"></li>
+                <li><a href="#">Separated link</a></li>
+            </ul>
+        </div></tr>
+            <tr> <div class="dropdown">
+                <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                    Followers{{followingme}}
+                    <span class="caret"></span>
+                </button>
+                <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+                    <li><a href="#">Action</a></li>
+                    <li><a href="#">Another action</a></li>
+                    <li><a href="#">Something else here</a></li>
+                    <li role="separator" class="divider"></li>
+                    <li><a href="#">Separated link</a></li>
+                </ul>
+            </div> </tr></table>
+        <div class="flex-module-footer">
+            <a href="/who_to_follow/import" class="js-find-friends-link" data-element-term="import_link">Find friends</a>
+        </div>
+
+
+        <div id='main'>
+
+            <div class="col-md-offset-2 col-md-8">
+
+
+                <div class="input-group">
+
+
+                    <textarea required class="form-control" maxlength="140"  rows="1" placeholder="What's happening?" ng-model="tweet_box" name="tweet_box" aria-describedby="basic-addon1"></textarea>
+                    <span class="input-group-addon" id="basic-addon1"><span class="glyphicon glyphicon-camera" style="color:#1da1f2"></span></span>
+                </div>
+                <input class="btn submit-btn pull-right" type="submit" style="color:#1da1f2" value="Tweet!" ng-click="inserttweet();" />
+
+                <br><br><br>
+
+                <div class="stream-end">
+                    <div class="stream-end-inner">
+
+                        <p class="empty-text">
+                            Your timeline is currently empty. Follow people  you find interesting to see their Tweets in your timeline.
+
+                        </p>
+
+                    </div>
+                </div>
+            </div></div>
+
+
+        <%
+        if(typeof tweet!='=undefined')
+        {
+        %>
+
+
+        <table ng-repeat="username in tweets">
+            <tr>
+                <td>@{{username.user_name}}</td>
+                <td>{{username.raw_text}}</td>
+                <td>{{username.timestamp}}</td>
+                <td>{{username.fullnaam}}</td>
+            </tr>
+        </table>
+        <br>
+
+        <%}%>
+
+
+
+    </div>
+</div>
+</body>
+</html>

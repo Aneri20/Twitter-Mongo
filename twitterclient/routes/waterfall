@@ -1,0 +1,92 @@
+function redirectToHomepage(req,res)
+{
+
+    async.waterfall([
+        function first(callback){
+            console.log("spotted at :: "+req.session.username);
+            //Set these headers to notify the browser not to maintain any cache for the page being loaded
+            res.header('Cache-Control', 'no-cache, private, no-store, must-revalidate, max-stale=0, post-check=0, pre-check=0');
+            //res.render("homePage",{user:req.session.user_name});
+            var users = "select following_username from follow where user_name='"+req.session.username+"'";
+            // console.log(users);
+            mysql.fetchData(function(err, result){
+                if(err){
+                    throw err;
+                }
+                else{
+                    console.log(result.length>0);
+                    //var users_name = new Array(result.length);
+                    var users_name="";
+                    for(var i=0;i<result.length;i++){
+
+                        if(result[i].user_name!=req.session.username){
+
+                            //users_name[i] = result[i].following_username ;
+                            if(i!=result.length-1){users_name += "'"+result[i].following_username+"'"+", " ;}
+                            else{users_name += "'"+result[i].following_username+"'";}
+                        }
+                    }
+                    req.session.followusers = users_name;
+                    console.log("REQ:"+req.session.followusers+"NANANANA");
+                    var sjd=req.session.followusers;
+                }
+                callback(null,req.session.followusers);
+            }, users);
+        },
+
+        function second(sjd, callback){
+            //console.log("BREAKUP::"+users);
+            var loadtweets = "SELECT * FROM tweet_details WHERE user_name IN ("+sjd+") ORDER BY ID DESC" ;
+            console.log(loadtweets);
+            mysql.fetchData(function(err, result){
+                if(err){
+                    throw err;
+                }
+                else{
+                    var sjd1="sjd1";
+                    console.log(result.length>0);
+                    var date=[];
+                    for(var i=0;i<result.length;i++){
+                        var	time= result[i].timeofTweet.toString();
+                        var splitResult = time.split("2016");
+                        date[i] = splitResult[0];
+                    }
+                    var names = [];
+                    for(var i=0;i<result.length;i++){
+                        var time = result[i].user_name;
+                        if(time!=req.session.username){
+                            names[i]="You Retweeted @"+result[i].user_name;
+                        }
+                        else{
+                            names[i] ="@" +result[i].user_name;
+                        }
+                    }
+                    ejs.renderFile('./views/homePage.ejs',{tweets: result,
+                        users:req.session.followusers,
+                        tweet_time:date,
+                        name1:req.session.username}, function(err, result) {
+                        if (!err) {
+                            res.end(result);
+                        }
+                        else {
+                            res.end('An error occurred');
+                            console.log(err);
+                        }
+                    });
+
+                }
+                callback(null, sjd1);
+            }, loadtweets);
+
+
+        }
+
+    ], function(err, result) { // the "complete" callback of `async.waterfall`
+        if ( err ) { // there was an error with either `getTicker` or `writeTicker`
+            console.warn('Error loading the tweets.',err);
+            return;
+        } else {
+            console.log('Successfully completed operation.');
+        }
+    });
+}
